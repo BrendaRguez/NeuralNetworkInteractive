@@ -6,26 +6,43 @@ import numpy as np
 #LOAD A NEW MODEL (UNO PROPIO)
 new_model = tf.keras.models.load_model("num_reader_mask.keras")
 
-#PREDICTIONS
-##---> AL FINAL predictions = new_model.predict(x_test)
 
 class canvasByPixel:
-   
     def __init__(self,numberPixelArt,canvasPixelSize, master):
+        
         self.numberPixelArt = numberPixelArt
         self.canvasPixelSize = canvasPixelSize
         self.PixelArray = np.zeros((numberPixelArt, numberPixelArt))
         self.PincelSize = 30
+
+        # Frame to hold the button
+        self.button_frame = Frame(master)
+        self.button_frame.pack(side=TOP, fill=X)
+
+        # Clear Canvas button
+        self.button = Button(self.button_frame, text="Clear Canvas", command=self.clear_canvas)
+        self.button.pack(side=TOP)
+
         self.w = Canvas(master, 
            width=numberPixelArt*canvasPixelSize,
            height=numberPixelArt*canvasPixelSize)
         self.w.pack()
 
+        # self.button = Button(self.w, text="Clear Canvas", command=self.clear_canvas)
+        # self.button.pack()
+
         self.default_canvas()
 
         self.w.bind( "<B1-Motion>", self.MotionPaint)
         self.w.bind( "<Button-1>", self.MotionPaint)
+
         
+    
+    def clear_canvas(self):
+        self.w.delete("all")
+        self.default_canvas()
+        self.PixelArray = np.zeros((numberPixelArt, numberPixelArt))
+
     def default_canvas(self):
         for i in range(self.numberPixelArt*self.numberPixelArt-1):
             for j in range(self.numberPixelArt*self.numberPixelArt-1):
@@ -65,4 +82,6 @@ if __name__ == "__main__":
     master = Tk()
     root = canvasByPixel(numberPixelArt,canvasPixelSize,master=master)
     master.mainloop()
+
+
 
